@@ -1,5 +1,6 @@
 import glob
 import os
+import random
 
 mvtec2_classes = ['can', 'fabric', 'fruit_jelly', 'rice', 'sheet_metal', 'vial', 'wallplugs', 'walnuts']
 
@@ -22,6 +23,9 @@ def load_mvtec2(category, k_shot, experiment_indx):
             defect_path = os.path.join(root_path, defect_type)
             if not os.path.isdir(defect_path):
                 continue
+            
+            if defect_type == 'ground_truth':
+                continue
 
             if defect_type == 'good':
                 img_paths = glob.glob(os.path.join(defect_path) + "/*.png")
@@ -35,8 +39,20 @@ def load_mvtec2(category, k_shot, experiment_indx):
                 img_paths = glob.glob(os.path.join(defect_path) + "/*.png")
                 img_paths.extend(glob.glob(os.path.join(defect_path) + "/*.jpg"))
                 img_paths.extend(glob.glob(os.path.join(defect_path) + "/*.JPG"))
-                gt_paths = [os.path.join(gt_path, defect_type, os.path.basename(s).rsplit('.', 1)[0] + '.png') for s in
-                            img_paths]
+                
+                if gt_path is not None:
+                    gt_paths = []
+                    for img_path_item in img_paths:
+                        img_name = os.path.basename(img_path_item)
+                        img_name_no_ext = img_name.rsplit('.', 1)[0]
+                        gt_file = os.path.join(gt_path, defect_type, img_name_no_ext + '_mask.png')
+                        if os.path.exists(gt_file):
+                            gt_paths.append(gt_file)
+                        else:
+                            gt_paths.append(0)
+                else:
+                    gt_paths = [0] * len(img_paths)
+                    
                 img_paths.sort()
                 gt_paths.sort()
                 img_tot_paths.extend(img_paths)
@@ -68,7 +84,6 @@ def load_mvtec2(category, k_shot, experiment_indx):
     selected_train_tot_types = []
 
     if k_shot > 0 and len(train_img_tot_paths) > 0:
-        import random
         random.seed(42)
         full_index = list(range(len(train_img_tot_paths)))
         selected_index = random.sample(full_index, min(k_shot, len(full_index)))
