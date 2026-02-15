@@ -77,7 +77,7 @@ def main(args):
         logger.info(f'{k}: {v}')
     logger.info('=========================================')
 
-    seeds = [111, 333, 999]
+    seeds = [42, 42, 42]
     kwargs['seed'] = seeds[kwargs['experiment_indx']]
     setup_seed(kwargs['seed'])
 
@@ -112,6 +112,16 @@ def main(args):
                    resolution=kwargs['resolution'])
 
     logger.info(f"\n")
+    logger.info("=" * 50)
+    logger.info(f"Dataset: {kwargs['dataset']}, Class: {kwargs['class_name']}")
+    logger.info("=" * 50)
+    logger.info(f"Image ROC-AUC (i_roc): {metrics['i_roc']:.2f}%")
+    logger.info(f"Pixel ROC-AUC (p_roc): {metrics['p_roc']:.2f}%")
+    logger.info(f"Pixel PRO-AUC (p_pro): {metrics['p_pro']:.2f}%")
+    logger.info(f"Image F1 (i_f1): {metrics['i_f1']:.2f}%")
+    logger.info(f"Pixel F1 (p_f1): {metrics['p_f1']:.2f}%")
+    logger.info(f"Region F1 (r_f1): {metrics['r_f1']:.2f}%")
+    logger.info("=" * 50)
 
     for k, v in metrics.items():
         logger.info(f"{kwargs['class_name']}======={k}: {v:.2f}")
@@ -126,7 +136,9 @@ def str2bool(v):
 
 def get_args():
     parser = argparse.ArgumentParser(description='Anomaly detection')
-    parser.add_argument('--dataset', type=str, default='visa', choices=['mvtec', 'visa'])
+    parser.add_argument('--dataset', type=str, default='visa', 
+                        choices=['mvtec', 'mvtec2', 'visa', 'mpdd', 'dagm', 'btad', 'dtd',
+                                 'br35h', 'brainmri', 'brain_tumor_mri', 'isic', 'clinicdb', 'colondb'])
     parser.add_argument('--class-name', type=str, default='candle')
 
     parser.add_argument('--img-resize', type=int, default=240)

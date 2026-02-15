@@ -7,7 +7,8 @@ if __name__ == '__main__':
     pool = Pool(processes=1)  # 进程池
 
     # datasets = ['mvtec','visa']
-    datasets = ['visa']
+    datasets = ['mvtec', 'mvtec2', 'visa', 'mpdd', 'dagm', 'btad', 'dtd',
+                'br35h', 'brainmri', 'brain_tumor_mri', 'isic', 'clinicdb', 'colondb']
     for dataset in datasets:
 
         classes = dataset_classes[dataset]

@@ -285,7 +285,7 @@ def download_pretrained_from_url(
         cache_dir: Union[str, None] = None,
 ):
     if not cache_dir:
-        cache_dir = os.path.expanduser("~/.cache/clip")
+        cache_dir = os.environ.get('CLIP_CACHE_DIR', '/root/autodl-tmp/checkpoints')
     os.makedirs(cache_dir, exist_ok=True)
     filename = os.path.basename(url)
 
@@ -341,6 +341,8 @@ def download_pretrained_from_hf(
         cache_dir: Union[str, None] = None,
 ):
     has_hf_hub(True)
+    if not cache_dir:
+        cache_dir = os.environ.get('CLIP_CACHE_DIR', '/root/autodl-tmp/checkpoints')
     cached_file = hf_hub_download(model_id, filename, revision=revision, cache_dir=cache_dir)
     return cached_file
 
